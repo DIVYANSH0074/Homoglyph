@@ -16,8 +16,8 @@ def homoglyph_regex(pattern):
     """
     text = pattern.get("regex", [])
     if text:
-        for index, part_pattern in enumerate(text):
-            pattern["regex"][index] = change_dash(part_pattern)
+        for index, regex in enumerate(text):
+            pattern["regex"][index] = change_dash(regex)
 
     split_dict = pattern.get("split_regex", {})
     if split_dict and isinstance(split_dict, dict):
@@ -29,50 +29,50 @@ def homoglyph_regex(pattern):
     return pattern
 
 
-def change_dash(part_pattern):
+def change_dash(regex):
     """
     General function for replacing dash with list of all dash in regex pattern
-    :param str part_pattern: regex containing different types of homoglyph
+    :param str regex: regex containing different types of homoglyph
     :return: regex replaced with list of homoglyphs
     """
-    check_alpha = r"\w-\w"
-    alpha_pattern = re.finditer(check_alpha, part_pattern)
-    alpha_hash = {}
-    for obj in alpha_pattern:
-        alpha_hash[obj.group()] = str_to_hash(obj.group(), "", 4)
-        part_pattern = part_pattern.replace(
+    regex_dict = {}
+    regex_range = r"\w-\w"
+    range_pattern = re.finditer(regex_range, regex)
+    for obj in range_pattern:
+        regex_dict[obj.group()] = str_to_hash(obj.group(), "", 4)
+        regex = regex.replace(
             obj.group(), str_to_hash(obj.group(), "", 4)
         )
 
-    check_slash = r"\\[-—–]"
-    slash_pattern = re.finditer(check_slash, part_pattern)
+    regex_slash = r"\\[-—–]"
+    slash_pattern = re.finditer(regex_slash, regex)
     for obj in slash_pattern:
-        part_pattern = part_pattern.replace(obj.group(), "-")
+        regex = regex.replace(obj.group(), "-")
 
-    check_brac = r"\\\[|\\]"
-    brac_pattern = re.finditer(check_brac, part_pattern)
+    regex_brac = r"\\\[|\\]"
+    brac_pattern = re.finditer(regex_brac, regex)
     for obj in brac_pattern:
-        alpha_hash[obj.group()] = str_to_hash(obj.group(), "", 4)
-        part_pattern = part_pattern.replace(
+        regex_dict[obj.group()] = str_to_hash(obj.group(), "", 4)
+        regex = regex.replace(
             obj.group(), str_to_hash(obj.group(), "", 4)
         )
 
     re_dash = r"[-—–]"
-    dash_index = [dash.start() for dash in re.finditer(re_dash, part_pattern)]
+    dash_indexes = [dash.start() for dash in re.finditer(re_dash, regex)]
 
-    if dash_index:
-        split_string = []
-        for _dash, num_dash in enumerate(dash_index):
+    if dash_indexes:
+        split_regex = []
+        for _dash, dash_index in enumerate(dash_indexes):
             if _dash == 0:
-                split_string.append(part_pattern[0:num_dash])
+                split_regex.append(regex[0:dash_index])
             else:
-                split_string.append(part_pattern[dash_index[_dash - 1] + 1 : num_dash])
+                split_regex.append(regex[dash_indexes[_dash - 1] + 1 : dash_index])
 
-        split_string.append(part_pattern[dash_index[-1] + 1 :])
+        split_regex.append(regex[dash_indexes[-1] + 1 :])
 
-        for _dash, num_dash in enumerate(dash_index):
+        for _dash, dash_index in enumerate(dash_indexes):
             checker = False
-            for char in part_pattern[num_dash:]:
+            for char in regex[dash_index:]:
                 if char == "]":
                     checker = True
                     break
@@ -82,17 +82,17 @@ def change_dash(part_pattern):
                     break
 
             if checker:
-                split_string[_dash] = split_string[_dash] + "˗۔‐‑‒–⁃−\\-➖Ⲻ﹘—"
+                split_regex[_dash] = split_regex[_dash] + "˗۔‐‑‒–⁃−\\-➖Ⲻ﹘—"
 
             else:
-                split_string[_dash] = split_string[_dash] + "[˗۔‐‑‒–⁃−\\-➖Ⲻ﹘—]"
+                split_regex[_dash] = split_regex[_dash] + "[˗۔‐‑‒–⁃−\\-➖Ⲻ﹘—]"
 
-        part_pattern = "".join(split_string)
+        regex = "".join(split_regex)
 
-    for key, value in alpha_hash.items():
-        part_pattern = part_pattern.replace(value, key)
+    for key, value in regex_dict.items():
+        regex = regex.replace(value, key)
 
-    return part_pattern
+    return regex
 
 
 def homoglyph_resolver(uid_regex):
@@ -102,16 +102,17 @@ def homoglyph_resolver(uid_regex):
     :return: uid regex repalced with list of homoglyphs
     """
     if uid_regex:
-        check_alpha = r"[a-z]-[a-z]"
-        alpha_pattern = re.finditer(check_alpha, uid_regex)
-        alpha_hash = {}
-        for obj in alpha_pattern:
-            alpha_hash[obj.group()] = str_to_hash(obj.group(), "", 4)
+        regex_range = r"[a-z]-[a-z]"
+        range_pattern = re.finditer(regex_range, uid_regex)
+        regex_dict = {}
+        for obj in range_pattern:
+            regex_dict[obj.group()] = str_to_hash(obj.group(), "", 4)
             uid_regex = uid_regex.replace(obj.group(), str_to_hash(obj.group(), "", 4))
 
         uid_regex = re.sub(r"[-–—]", "[˗۔‐‑‒–⁃−\\-➖Ⲻ﹘—]", uid_regex)
 
-        for key, value in alpha_hash.items():
+        for key, value in regex_dict.items():
             uid_regex = uid_regex.replace(value, key)
 
     return uid_regex
+
