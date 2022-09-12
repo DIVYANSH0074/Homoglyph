@@ -21,7 +21,7 @@ class ADFGeneratorGlyphsTest(unittest.TestCase):
 
     def test_ECFR_regex(self):
         pattern = {'regex': ['(?i)(Sub-part)\\s*(?P<subpart>[a-zA-Z0-9]*)\\s*of\\s*the\\s*federal\\s*regulations\\s*,?\\s*section\\s*(?P<partSection>\\d+[a-z0-9A-Z.()]*)'], 'adf': {'repo': 'US-ECFR', 'partSection': '{}', 'subpart': '{}'}, 'split_regex': {'partSection': {'part': '(?P<part>\\d+)(\\.)(?:(\\d(\\S(?!\\;))*(\\s+|\\Z)(\\,\\s+)?))((\\band\\b|\\bor\\b)?\\s*)', 'section': '(?:\\d+)(\\.)(?P<section>(\\d(\\S(?!\\;))*(\\s+|\\Z)(\\,\\s+)?))((\\band\\b|\\bor\\b)?\\s*)'}}, 'name': 'TEXT', 'example': 'chapter 3'}
-        pattern_h = {'regex': ['(?i)(Sub-part)\\s*(?P<subpart>[a-zA-Z0-9]*)\\s*of\\s*the\\s*federal\\s*regulations\\s*,?\\s*section\\s*(?P<partSection>\\d+[a-z0-9A-Z.()]*)'], 'adf': {'repo': 'US-ECFR', 'partSection': '{}', 'subpart': '{}'}, 'split_regex': {'partSection': {'part': '(?P<part>\\d+)(\\.)(?:(\\d(\\S(?!\\;))*(\\s+|\\Z)(\\,\\s+)?))((\\band\\b|\\bor\\b)?\\s*)', 'section': '(?:\\d+)(\\.)(?P<section>(\\d(\\S(?!\\;))*(\\s+|\\Z)(\\,\\s+)?))((\\band\\b|\\bor\\b)?\\s*)'}}, 'name': 'TEXT', 'example': 'chapter 3'}
+        pattern_h = {'regex': ['(?i)(Sub[˗۔‐‑‒–⁃−\\-➖Ⲻ﹘—]part)\\s*(?P<subpart>[a-zA-Z0-9]*)\\s*of\\s*the\\s*federal\\s*regulations\\s*,?\\s*section\\s*(?P<partSection>\\d+[a-z0-9A-Z.()]*)'], 'adf': {'repo': 'US-ECFR', 'partSection': '{}', 'subpart': '{}'}, 'split_regex': {'partSection': {'part': '(?P<part>\\d+)(\\.)(?:(\\d(\\S(?!\\;))*(\\s+|\\Z)(\\,\\s+)?))((\\band\\b|\\bor\\b)?\\s*)', 'section': '(?:\\d+)(\\.)(?P<section>(\\d(\\S(?!\\;))*(\\s+|\\Z)(\\,\\s+)?))((\\band\\b|\\bor\\b)?\\s*)'}}, 'name': 'TEXT', 'example': 'chapter 3'}
         self.assertEqual(pattern_h, homoglyph_regex(pattern))
 
     def test_NYSE_CHICAGO_regex(self):

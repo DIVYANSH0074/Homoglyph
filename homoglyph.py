@@ -9,6 +9,7 @@ def str_to_hash(my_string, my_key="data", hash_size=30):
 
 
 def homoglyph_regex(pattern):
+
     """
     Homoglyph executor for ADF Generator
     :param str pattern: list of regex pattern in single repo adf generator specific
@@ -36,13 +37,6 @@ def change_dash(regex):
     :return: regex replaced with list of homoglyphs
     """
     regex_dict = {}
-    regex_range = r"\w-\w"
-    range_pattern = re.finditer(regex_range, regex)
-    for obj in range_pattern:
-        regex_dict[obj.group()] = str_to_hash(obj.group(), "", 4)
-        regex = regex.replace(
-            obj.group(), str_to_hash(obj.group(), "", 4)
-        )
 
     regex_slash = r"\\[-—–]"
     slash_pattern = re.finditer(regex_slash, regex)
@@ -52,10 +46,34 @@ def change_dash(regex):
     regex_brac = r"\\\[|\\]"
     brac_pattern = re.finditer(regex_brac, regex)
     for obj in brac_pattern:
-        regex_dict[obj.group()] = str_to_hash(obj.group(), "", 4)
+        regex_dict[obj.group()] = str_to_hash(obj.group(), "", 3)
         regex = regex.replace(
-            obj.group(), str_to_hash(obj.group(), "", 4)
+            obj.group(), str_to_hash(obj.group(), "", 3)
         )
+
+    regex_range = r"\w-\w"
+    range_pattern = re.finditer(regex_range, regex)
+    range_dict = {}
+    for obj in range_pattern:
+        range_checker = False
+        for char in regex[obj.span()[0]:]:
+            if char == "]":
+                range_checker = True
+                break
+
+            elif char == "[":
+                range_checker = False
+                range_dict[obj.group()] = str_to_hash(obj.group(), "1", 3)
+                regex = regex[0:obj.span()[0]] + str_to_hash(obj.group(), "1", 3) + regex[obj.span()[1]:]
+                break
+        if range_checker:
+            regex_dict[obj.group()] = str_to_hash(obj.group(), "", 3)
+            regex = regex.replace(
+                obj.group(), str_to_hash(obj.group(), "", 3)
+            )
+
+    for key, value in range_dict.items():
+        regex = regex.replace(value, key)
 
     re_dash = r"[-—–]"
     dash_indexes = [dash.start() for dash in re.finditer(re_dash, regex)]
@@ -115,4 +133,3 @@ def homoglyph_resolver(uid_regex):
             uid_regex = uid_regex.replace(value, key)
 
     return uid_regex
-
