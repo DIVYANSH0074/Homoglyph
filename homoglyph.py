@@ -128,6 +128,7 @@ def homoglyph_resolver(uid_regex):
             uid_regex = uid_regex.replace(obj.group(), str_to_hash(obj.group(), "", 4))
 
         uid_regex = re.sub(r"[-–—]", "[˗۔‐‑‒–⁃−\\-➖Ⲻ﹘—]", uid_regex)
+        uid_regex = uid_regex.replace("[˗۔‐‑‒–⁃−\\-➖Ⲻ﹘—]", "-", 1)
 
         for key, value in regex_dict.items():
             uid_regex = uid_regex.replace(value, key)
